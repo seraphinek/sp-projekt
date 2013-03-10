@@ -1,30 +1,111 @@
 package model;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+
 import view.TaskWindow;
 
-public class ExecutionTask extends Thread {
+public class ExecutionTask extends SwingWorker<Void, Void> {
 
 	private final ExecutionParameters executionParameters;
 	private final TaskWindow taskWindow;
+	private Connection connection;
 
 	public ExecutionTask(ExecutionParameters executionParameters,
 			TaskWindow taskWindow) {
 		this.executionParameters = executionParameters;
 		this.taskWindow = taskWindow;
+
+		try {
+			// Class.forName("oracle.jdbc.driver.OracleDriver");
+			// String url = "jdbc:oracle:thin:@"
+			// + executionParameters.getServerName() + ":"
+			// + executionParameters.getPortNumber() + ":"
+			// + executionParameters.getDbName();
+
+			Class.forName("com.mysql.jdbc.Driver");
+			String connectionString = "jdbc:mysql://"
+					+ executionParameters.getServerName()
+					+ ":"
+					+ executionParameters.getPortNumber()
+					+ "/"
+					+ executionParameters.getDbName()
+					+ "?user="
+					+ executionParameters.getUserName()
+					+ "&password="
+					+ executionParameters.getUserPassword()
+					+ "&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10";
+			connection = DriverManager.getConnection(connectionString,
+					executionParameters.getUserName(),
+					executionParameters.getUserPassword());
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null,
+					"Couldn't connect to database !");
+			taskWindow.dispose();
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Couldn't find JDBC driver !");
+			taskWindow.dispose();
+		}
+
 	}
 
 	@Override
-	public void run() {
-		super.run();
+	protected Void doInBackground() throws Exception {
+		try {
+			for (int i = 0; i < executionParameters.getNumberOfTransactions(); i++) {
+				SwingWorker<Long, Void> swingWorker = new SwingWorker<Long, Void>() {
 
-		for (int i = 0; i < executionParameters.getNumberOfTransactions(); i++) {
-			long start = System.currentTimeMillis();
-			for (int j = 0; j < executionParameters
-					.getNumberOfDataInsertsInTransaction(); j++) {
+					private long start;
+					private long result;
 
+					@Override
+					protected Long doInBackground() throws Exception {
+						start = System.currentTimeMillis();
+						for (int j = 0; j < executionParameters
+								.getNumberOfDataInsertsInTransaction(); j++) {
+							PreparedStatement statement = null;
+							String query = "SELECT * FROM rows";
+							try {
+								statement = connection.prepareStatement(query);
+								statement.executeQuery();
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+						}
+						result = System.currentTimeMillis() - start;
+						return result;
+					}
+
+					@Override
+					protected void done() {
+						try {
+							get();
+							taskWindow.updateChart(result);
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+
+				swingWorker.execute();
+				while (!swingWorker.isDone())
+					;
 			}
-			long stop = System.currentTimeMillis();
-			taskWindow.updateChart(stop - start);
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(taskWindow,
+						"Problem with closing connection !");
+			}
 		}
+		return null;
 	}
 }

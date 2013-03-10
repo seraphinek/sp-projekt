@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
@@ -28,7 +30,7 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	private JSpinner numberOfTransactions;
 	private JSpinner numberOfDataInsertsInTransaction;
-	private JTextField warehouseAddress;
+	private JTextField warehousePortNumber;
 	private JSpinner intervalBetweenCommits;
 	private JButton defaultButton;
 	private JButton executeTaskButton;
@@ -36,6 +38,10 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JButton aboutButton;
 
 	private final MainWindowController controller;
+	private JTextField warehouseServerAddress;
+	private JTextField warehouseDatabaseName;
+	private JTextField warehouseUserName;
+	private JPasswordField warehouseUserPassword;
 
 	public MainWindow(MainWindowController mainWindowController) {
 		this.controller = mainWindowController;
@@ -56,9 +62,11 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JPanel createButtonsPanel() {
 		JPanel buttonsPanel = new JPanel();
 		defaultButton = new JButton("Default values");
-		defaultButton.addActionListener(this);
+		defaultButton.addActionListener(controller
+				.getDefaultParametersActionListener());
 		executeTaskButton = new JButton("Execute task");
-		executeTaskButton.addActionListener(this);
+		executeTaskButton.addActionListener(controller
+				.getExecuteTaskActionListener());
 		aboutButton = new JButton("About...");
 		aboutButton.addActionListener(this);
 		exitButton = new JButton("Exit");
@@ -128,17 +136,72 @@ public class MainWindow extends JFrame implements ActionListener {
 	}
 
 	private void prepareWarehouseParametersFields(JPanel paramsPanel) {
-		JPanel warehousePanel = new JPanel();
-		JLabel warehouseAddressLabel = new JLabel("Warehouse address:");
-		warehouseAddressLabel.setLabelFor(warehouseAddress);
-		warehouseAddressLabel.setPreferredSize(new Dimension(LABEL_WIDTH,
-				FIELD_HEIGHT));
-		warehousePanel.add(warehouseAddressLabel);
-		warehouseAddress = new JTextField();
-		warehouseAddress.setPreferredSize(new Dimension(FIELD_WIDTH,
-				FIELD_HEIGHT));
-		warehousePanel.add(warehouseAddress);
+		JPanel warehousePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		warehousePanel.setPreferredSize(new Dimension(500, 100));
+		createWarehouseAddressFields(warehousePanel);
+		createWarehousePortNumberFields(warehousePanel);
+		createWarehouseDatabaseNameFields(warehousePanel);
+		createWarehouseUserNameFields(warehousePanel);
+		createWarehouseUserPasswordFields(warehousePanel);
 		paramsPanel.add(warehousePanel);
+	}
+
+	private void createWarehouseUserPasswordFields(JPanel warehousePanel) {
+		JLabel warehouseUserPasswordLabel = new JLabel("Password:");
+		warehouseUserPasswordLabel.setLabelFor(warehouseUserPassword);
+		warehouseUserPasswordLabel.setPreferredSize(new Dimension(70,
+				FIELD_HEIGHT));
+		warehousePanel.add(warehouseUserPasswordLabel);
+		warehouseUserPassword = new JPasswordField();
+		warehouseUserPassword
+				.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
+		warehousePanel.add(warehouseUserPassword);
+	}
+
+	private void createWarehouseUserNameFields(JPanel warehousePanel) {
+		JLabel warehouseUserNameLabel = new JLabel("User name:");
+		warehouseUserNameLabel.setLabelFor(warehouseUserName);
+		warehouseUserNameLabel
+				.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
+		warehousePanel.add(warehouseUserNameLabel);
+		warehouseUserName = new JTextField();
+		warehouseUserName.setPreferredSize(new Dimension(FIELD_WIDTH,
+				FIELD_HEIGHT));
+		warehousePanel.add(warehouseUserName);
+	}
+
+	private void createWarehouseDatabaseNameFields(JPanel warehousePanel) {
+		JLabel warehouseDbNameLabel = new JLabel("Database name:");
+		warehouseDbNameLabel.setLabelFor(warehouseDatabaseName);
+		warehouseDbNameLabel.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
+		warehousePanel.add(warehouseDbNameLabel);
+		warehouseDatabaseName = new JTextField();
+		warehouseDatabaseName
+				.setPreferredSize(new Dimension(220, FIELD_HEIGHT));
+		warehousePanel.add(warehouseDatabaseName);
+	}
+
+	private void createWarehousePortNumberFields(JPanel warehousePanel) {
+		JLabel warehousePortNumberLabel = new JLabel("Port number:");
+		warehousePortNumberLabel.setLabelFor(warehousePortNumber);
+		warehousePortNumberLabel.setPreferredSize(new Dimension(100,
+				FIELD_HEIGHT));
+		warehousePanel.add(warehousePortNumberLabel);
+		warehousePortNumber = new JTextField();
+		warehousePortNumber.setPreferredSize(new Dimension(50, FIELD_HEIGHT));
+		warehousePanel.add(warehousePortNumber);
+	}
+
+	private void createWarehouseAddressFields(JPanel warehousePanel) {
+		JLabel warehouseAddressLabel = new JLabel("Server address:");
+		warehouseAddressLabel.setLabelFor(warehousePortNumber);
+		warehouseAddressLabel
+				.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
+		warehousePanel.add(warehouseAddressLabel);
+		warehouseServerAddress = new JTextField();
+		warehouseServerAddress
+				.setPreferredSize(new Dimension(380, FIELD_HEIGHT));
+		warehousePanel.add(warehouseServerAddress);
 	}
 
 	private JPanel createTitlePanel() {
@@ -152,16 +215,6 @@ public class MainWindow extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-
-		if (source.equals(executeTaskButton)) {
-			controller.executeTask();
-			return;
-		}
-
-		if (source.equals(defaultButton)) {
-			controller.setDefaultParameters();
-			return;
-		}
 
 		if (source.equals(aboutButton)) {
 			controller.showAboutWindow();
@@ -186,12 +239,28 @@ public class MainWindow extends JFrame implements ActionListener {
 		return numberOfDataInsertsInTransaction;
 	}
 
-	public JTextField getWarehouseAddress() {
-		return warehouseAddress;
+	public JTextField getWarehousePortNumber() {
+		return warehousePortNumber;
 	}
 
 	public JSpinner getIntervalBetweenCommits() {
 		return intervalBetweenCommits;
+	}
+
+	public JTextField getWarehouseServerAddress() {
+		return warehouseServerAddress;
+	}
+
+	public JTextField getWarehouseDatabaseName() {
+		return warehouseDatabaseName;
+	}
+
+	public JTextField getWarehouseUserName() {
+		return warehouseUserName;
+	}
+
+	public JPasswordField getWarehouseUserPassword() {
+		return warehouseUserPassword;
 	}
 
 }
