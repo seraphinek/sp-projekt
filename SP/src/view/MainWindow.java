@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
+import model.DatabaseType;
 import controller.MainWindowController;
 
 public class MainWindow extends JFrame implements ActionListener {
@@ -41,6 +43,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JTextField warehouseServerAddress;
 	private JTextField warehouseDatabaseName;
 	private JTextField warehouseUserName;
+	private JComboBox<DatabaseType> warehouseDatabaseType;
 	private JPasswordField warehouseUserPassword;
 
 	public MainWindow(MainWindowController mainWindowController) {
@@ -141,15 +144,29 @@ public class MainWindow extends JFrame implements ActionListener {
 		createWarehouseAddressFields(warehousePanel);
 		createWarehousePortNumberFields(warehousePanel);
 		createWarehouseDatabaseNameFields(warehousePanel);
+		createDatabaseTypeFields(warehousePanel);
 		createWarehouseUserNameFields(warehousePanel);
 		createWarehouseUserPasswordFields(warehousePanel);
 		paramsPanel.add(warehousePanel);
 	}
 
+	private void createDatabaseTypeFields(JPanel warehousePanel) {
+		JLabel warehouseDatabaseTypeLabel = new JLabel("Database type:");
+		warehouseDatabaseTypeLabel.setLabelFor(warehouseUserPassword);
+		warehouseDatabaseTypeLabel.setPreferredSize(new Dimension(90,
+				FIELD_HEIGHT));
+		warehousePanel.add(warehouseDatabaseTypeLabel);
+		warehouseDatabaseType = new JComboBox<DatabaseType>(
+				DatabaseType.values());
+		warehouseDatabaseType
+				.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
+		warehousePanel.add(warehouseDatabaseType);
+	}
+
 	private void createWarehouseUserPasswordFields(JPanel warehousePanel) {
 		JLabel warehouseUserPasswordLabel = new JLabel("Password:");
 		warehouseUserPasswordLabel.setLabelFor(warehouseUserPassword);
-		warehouseUserPasswordLabel.setPreferredSize(new Dimension(70,
+		warehouseUserPasswordLabel.setPreferredSize(new Dimension(90,
 				FIELD_HEIGHT));
 		warehousePanel.add(warehouseUserPasswordLabel);
 		warehouseUserPassword = new JPasswordField();
@@ -165,8 +182,7 @@ public class MainWindow extends JFrame implements ActionListener {
 				.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
 		warehousePanel.add(warehouseUserNameLabel);
 		warehouseUserName = new JTextField();
-		warehouseUserName.setPreferredSize(new Dimension(FIELD_WIDTH,
-				FIELD_HEIGHT));
+		warehouseUserName.setPreferredSize(new Dimension(180, FIELD_HEIGHT));
 		warehousePanel.add(warehouseUserName);
 	}
 
@@ -177,18 +193,18 @@ public class MainWindow extends JFrame implements ActionListener {
 		warehousePanel.add(warehouseDbNameLabel);
 		warehouseDatabaseName = new JTextField();
 		warehouseDatabaseName
-				.setPreferredSize(new Dimension(220, FIELD_HEIGHT));
+				.setPreferredSize(new Dimension(180, FIELD_HEIGHT));
 		warehousePanel.add(warehouseDatabaseName);
 	}
 
 	private void createWarehousePortNumberFields(JPanel warehousePanel) {
 		JLabel warehousePortNumberLabel = new JLabel("Port number:");
 		warehousePortNumberLabel.setLabelFor(warehousePortNumber);
-		warehousePortNumberLabel.setPreferredSize(new Dimension(100,
+		warehousePortNumberLabel.setPreferredSize(new Dimension(90,
 				FIELD_HEIGHT));
 		warehousePanel.add(warehousePortNumberLabel);
 		warehousePortNumber = new JTextField();
-		warehousePortNumber.setPreferredSize(new Dimension(50, FIELD_HEIGHT));
+		warehousePortNumber.setPreferredSize(new Dimension(100, FIELD_HEIGHT));
 		warehousePanel.add(warehousePortNumber);
 	}
 
@@ -200,7 +216,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		warehousePanel.add(warehouseAddressLabel);
 		warehouseServerAddress = new JTextField();
 		warehouseServerAddress
-				.setPreferredSize(new Dimension(380, FIELD_HEIGHT));
+				.setPreferredSize(new Dimension(180, FIELD_HEIGHT));
 		warehousePanel.add(warehouseServerAddress);
 	}
 
@@ -261,6 +277,10 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	public JPasswordField getWarehouseUserPassword() {
 		return warehouseUserPassword;
+	}
+
+	public JComboBox<DatabaseType> getWarehouseDatabaseType() {
+		return warehouseDatabaseType;
 	}
 
 }

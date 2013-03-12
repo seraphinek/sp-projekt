@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import model.ConnectionParameters;
+import model.DatabaseType;
 import model.ExecutionParameters;
 import utils.ComponentUtils;
 import view.AboutWindow;
@@ -44,6 +46,8 @@ public class MainWindowController {
 					mainWindow.getWarehouseDatabaseName().setText("janusz");
 					mainWindow.getWarehouseUserName().setText("janusz");
 					mainWindow.getWarehouseUserPassword().setText("janusz");
+					mainWindow.getWarehouseDatabaseType().setSelectedItem(
+							DatabaseType.MYSQL);
 				}
 			});
 		}
@@ -69,22 +73,29 @@ public class MainWindowController {
 	};
 
 	private ExecutionParameters gatherExecutionParameters() {
-		ExecutionParameters parameters = new ExecutionParameters();
-		parameters.setIntervalBetweenTransactions((Integer) mainWindow
+		ExecutionParameters executionParameters = new ExecutionParameters();
+		executionParameters.setIntervalBetweenTransactions((Integer) mainWindow
 				.getIntervalBetweenCommits().getValue());
-		parameters.setNumberOfDataInsertsInTransaction((Integer) mainWindow
-				.getNumberOfDataInsertsInTransaction().getValue());
-		parameters.setNumberOfTransactions((Integer) mainWindow
+		executionParameters
+				.setNumberOfDataInsertsInTransaction((Integer) mainWindow
+						.getNumberOfDataInsertsInTransaction().getValue());
+		executionParameters.setNumberOfTransactions((Integer) mainWindow
 				.getNumberOfTransactions().getValue());
-		parameters.setDbName(mainWindow.getWarehouseDatabaseName().getText());
-		parameters.setServerName(mainWindow.getWarehouseServerAddress()
+		ConnectionParameters connectionParameters = new ConnectionParameters();
+		connectionParameters.setDbName(mainWindow.getWarehouseDatabaseName()
 				.getText());
-		parameters.setPortNumber(Integer.decode(mainWindow
+		connectionParameters.setServerName(mainWindow
+				.getWarehouseServerAddress().getText());
+		connectionParameters.setPortNumber(Integer.decode(mainWindow
 				.getWarehousePortNumber().getText()));
-		parameters.setUserName(mainWindow.getWarehouseUserName().getText());
-		parameters.setPassword(new String(mainWindow.getWarehouseUserPassword()
-				.getPassword()));
-		return parameters;
+		connectionParameters.setUserName(mainWindow.getWarehouseUserName()
+				.getText());
+		connectionParameters.setPassword(new String(mainWindow
+				.getWarehouseUserPassword().getPassword()));
+		connectionParameters.setDatabaseType((DatabaseType) mainWindow
+				.getWarehouseDatabaseType().getSelectedItem());
+		executionParameters.setConnectionParameters(connectionParameters);
+		return executionParameters;
 	}
 
 	private boolean validateParameters() {

@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
@@ -23,28 +22,8 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 		this.taskWindow = taskWindow;
 
 		try {
-			// Class.forName("oracle.jdbc.driver.OracleDriver");
-			// String url = "jdbc:oracle:thin:@"
-			// + executionParameters.getServerName() + ":"
-			// + executionParameters.getPortNumber() + ":"
-			// + executionParameters.getDbName();
-
-			Class.forName("com.mysql.jdbc.Driver");
-			String connectionString = "jdbc:mysql://"
-					+ executionParameters.getServerName()
-					+ ":"
-					+ executionParameters.getPortNumber()
-					+ "/"
-					+ executionParameters.getDbName()
-					+ "?user="
-					+ executionParameters.getUserName()
-					+ "&password="
-					+ executionParameters.getUserPassword()
-					+ "&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10";
-			connection = DriverManager.getConnection(connectionString,
-					executionParameters.getUserName(),
-					executionParameters.getUserPassword());
-			connection.setAutoCommit(false);
+			connection = ConnectionFactory.createConnection(executionParameters
+					.getConnectionParameters());
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null,
 					"Couldn't connect to database !");
