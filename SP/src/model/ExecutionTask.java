@@ -54,6 +54,7 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 							try {
 								statement = connection.prepareStatement(query);
 								statement.executeQuery();
+								statement.close();
 							} catch (SQLException e) {
 								e.printStackTrace();
 							}
