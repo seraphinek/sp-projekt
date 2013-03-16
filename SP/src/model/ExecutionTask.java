@@ -50,7 +50,7 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 						for (int j = 0; j < executionParameters
 								.getNumberOfDataInsertsInTransaction(); j++) {
 							PreparedStatement statement = null;
-							String query = "SELECT * FROM rows";
+							String query = "SELECT * FROM h_nation";
 							try {
 								statement = connection.prepareStatement(query);
 								statement.executeQuery();

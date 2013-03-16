@@ -40,14 +40,13 @@ public class MainWindowController {
 							.setValue(5);
 					mainWindow.getIntervalBetweenCommits().setValue(5);
 					mainWindow.getNumberOfTransactions().setValue(15);
-					mainWindow.getWarehouseServerAddress().setText(
-							"djmaciej.sytes.net");
-					mainWindow.getWarehousePortNumber().setText("3306");
-					mainWindow.getWarehouseDatabaseName().setText("janusz");
-					mainWindow.getWarehouseUserName().setText("janusz");
-					mainWindow.getWarehouseUserPassword().setText("janusz");
+					mainWindow.getWarehouseServerAddress().setText("localhost");
+					mainWindow.getWarehousePortNumber().setText("1521");
+					mainWindow.getWarehouseDatabaseName().setText("orcl");
+					mainWindow.getWarehouseUserName().setText("tpch");
+					mainWindow.getWarehouseUserPassword().setText("tpch");
 					mainWindow.getWarehouseDatabaseType().setSelectedItem(
-							DatabaseType.MYSQL);
+							DatabaseType.ORACLE);
 				}
 			});
 		}
