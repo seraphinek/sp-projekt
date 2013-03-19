@@ -31,6 +31,13 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		try {
+			final String[] orderInserts = fileUtils
+					.getOrderInserts(executionParameters
+							.getNumberOfDataInsertsInTransaction());
+			final Map<Integer, String[]> lineItemsInserts = fileUtils
+					.getLineItemsInsertsSet(executionParameters
+							.getNumberOfDataInsertsInTransaction());
+			
 			for (int i = 0; i < executionParameters.getNumberOfTransactions(); i++) {
 				SwingWorker<Long, Void> swingWorker = new SwingWorker<Long, Void>() {
 
@@ -40,13 +47,6 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 					@Override
 					protected Long doInBackground() throws Exception {
 
-						String[] orderInserts = fileUtils
-								.getOrderInserts(executionParameters
-										.getNumberOfDataInsertsInTransaction());
-						Map<Integer, String[]> lineItemsInserts = fileUtils
-								.getLineItemsInsertsSet(executionParameters
-										.getNumberOfDataInsertsInTransaction());
-
 						start = System.currentTimeMillis();
 						for (int j = 0; j < executionParameters
 								.getNumberOfDataInsertsInTransaction(); j++) {
@@ -55,11 +55,9 @@ public class ExecutionTask extends SwingWorker<Void, Void> {
 							try {
 								statement = connection.createStatement();
 								statement.addBatch(orderInserts[j]);
-								System.out.println(orderInserts[j]);
 								for (String lineItemInsert : lineItemsInserts
 										.get(j)) {
 									statement.addBatch(lineItemInsert);
-									System.out.println(lineItemInsert);
 								}
 
 								statement.executeBatch();
