@@ -40,7 +40,7 @@ public class MainWindowController {
 							.setValue(5);
 					mainWindow.getIntervalBetweenCommits().setValue(5);
 					mainWindow.getNumberOfTransactions().setValue(15);
-					mainWindow.getWarehouseServerAddress().setText("localhost");
+					mainWindow.getWarehouseServerAddress().setText("25.165.194.88");
 					mainWindow.getWarehousePortNumber().setText("1521");
 					mainWindow.getWarehouseDatabaseName().setText("orcl");
 					mainWindow.getWarehouseUserName().setText("tpch");
