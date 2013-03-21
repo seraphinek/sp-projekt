@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 import model.ConnectionParameters;
 import model.DatabaseType;
 import model.ExecutionParameters;
+import model.TaskType;
 import utils.ComponentUtils;
 import view.AboutWindow;
 import view.MainWindow;
@@ -39,14 +40,18 @@ public class MainWindowController {
 					mainWindow.getNumberOfDataInsertsInTransaction()
 							.setValue(5);
 					mainWindow.getIntervalBetweenCommits().setValue(5);
+					mainWindow.getNumberOfTasks().setValue(1);
 					mainWindow.getNumberOfTransactions().setValue(15);
-					mainWindow.getWarehouseServerAddress().setText("25.165.194.88");
+					mainWindow.getWarehouseServerAddress().setText(
+							"25.165.194.88");
 					mainWindow.getWarehousePortNumber().setText("1521");
 					mainWindow.getWarehouseDatabaseName().setText("orcl");
 					mainWindow.getWarehouseUserName().setText("tpch");
 					mainWindow.getWarehouseUserPassword().setText("tpch");
 					mainWindow.getWarehouseDatabaseType().setSelectedItem(
 							DatabaseType.ORACLE);
+					mainWindow.getExecutionTaskType().setSelectedItem(
+							TaskType.SIMPLE);
 				}
 			});
 		}
@@ -80,6 +85,10 @@ public class MainWindowController {
 						.getNumberOfDataInsertsInTransaction().getValue());
 		executionParameters.setNumberOfTransactions((Integer) mainWindow
 				.getNumberOfTransactions().getValue());
+		executionParameters.setTaskType((TaskType) mainWindow
+				.getExecutionTaskType().getSelectedItem());
+		executionParameters.setNumberOfTasks((Integer) mainWindow
+				.getNumberOfTasks().getValue());
 		ConnectionParameters connectionParameters = new ConnectionParameters();
 		connectionParameters.setDbName(mainWindow.getWarehouseDatabaseName()
 				.getText());

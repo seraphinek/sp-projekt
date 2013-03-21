@@ -4,6 +4,8 @@ public class ExecutionParameters {
 	private int numberOfTransactions;
 	private int numberOfDataInsertsInTransaction;
 	private int intervalBetweenTransactions;
+	private int numberOfTasks;
+	private TaskType taskType;
 	private ConnectionParameters connectionParameters;
 
 	public int getNumberOfTransactions() {
@@ -39,6 +41,22 @@ public class ExecutionParameters {
 
 	public ConnectionParameters getConnectionParameters() {
 		return connectionParameters;
+	}
+
+	public TaskType getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(TaskType taskType) {
+		this.taskType = taskType;
+	}
+
+	public int getNumberOfTasks() {
+		return numberOfTasks;
+	}
+
+	public void setNumberOfTasks(int numberOfTasks) {
+		this.numberOfTasks = numberOfTasks;
 	}
 
 }

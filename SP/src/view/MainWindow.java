@@ -20,6 +20,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import model.DatabaseType;
+import model.TaskType;
 import controller.MainWindowController;
 
 public class MainWindow extends JFrame implements ActionListener {
@@ -34,6 +35,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JSpinner numberOfDataInsertsInTransaction;
 	private JTextField warehousePortNumber;
 	private JSpinner intervalBetweenCommits;
+	private JSpinner numberOfTasks;
 	private JButton defaultButton;
 	private JButton executeTaskButton;
 	private JButton exitButton;
@@ -44,6 +46,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JTextField warehouseDatabaseName;
 	private JTextField warehouseUserName;
 	private JComboBox<DatabaseType> warehouseDatabaseType;
+	private JComboBox<TaskType> executionTaskType;
 	private JPasswordField warehouseUserPassword;
 
 	public MainWindow(MainWindowController mainWindowController) {
@@ -89,7 +92,36 @@ public class MainWindow extends JFrame implements ActionListener {
 		prepareNumberOfTransactionsParametersFields(parametersPanel);
 		prepareNumberOfDataInsertsInTranactionParametersFields(parametersPanel);
 		prepareBreakBetweenCommitsParametersFields(parametersPanel);
+		prepareNumberOfTasksParametersFields(parametersPanel);
+		prepareExecutionTaskTypeParametersFields(parametersPanel);
 		return parametersPanel;
+	}
+
+	private void prepareNumberOfTasksParametersFields(JPanel paramsPanel) {
+		JPanel numberOfTasksPanel = new JPanel();
+		JLabel numberOfTasksLabel = new JLabel("Number of parallel tasks:");
+		numberOfTasksLabel.setPreferredSize(new Dimension(LABEL_WIDTH,
+				FIELD_HEIGHT));
+		numberOfTasksLabel.setLabelFor(numberOfTasks);
+		numberOfTasksPanel.add(numberOfTasksLabel);
+		numberOfTasks = new JSpinner(getSpinnerNumberModel());
+		numberOfTasks
+				.setPreferredSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+		numberOfTasksPanel.add(numberOfTasks);
+		paramsPanel.add(numberOfTasksPanel);
+	}
+
+	private void prepareExecutionTaskTypeParametersFields(JPanel paramsPanel) {
+		JPanel executionTaskTypePanel = new JPanel();
+		JLabel executionTaskTypeLabel = new JLabel("Type of task:");
+		executionTaskTypeLabel.setPreferredSize(new Dimension(LABEL_WIDTH,
+				FIELD_HEIGHT));
+		executionTaskTypePanel.add(executionTaskTypeLabel);
+		executionTaskType = new JComboBox<TaskType>(TaskType.values());
+		executionTaskType.setPreferredSize(new Dimension(FIELD_WIDTH,
+				FIELD_HEIGHT));
+		executionTaskTypePanel.add(executionTaskType);
+		paramsPanel.add(executionTaskTypePanel);
 	}
 
 	private void prepareBreakBetweenCommitsParametersFields(
@@ -281,6 +313,14 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	public JComboBox<DatabaseType> getWarehouseDatabaseType() {
 		return warehouseDatabaseType;
+	}
+
+	public JComboBox<TaskType> getExecutionTaskType() {
+		return executionTaskType;
+	}
+
+	public JSpinner getNumberOfTasks() {
+		return numberOfTasks;
 	}
 
 }
