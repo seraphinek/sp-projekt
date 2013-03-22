@@ -7,7 +7,7 @@ import javax.swing.SwingWorker;
 
 import model.ExecutionParameters;
 import model.task.SimpleExecutionTask;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import view.taskwindow.FrequencyTaskWindow;
 import view.taskwindow.SimpleTaskWindow;
 import view.taskwindow.TaskWindow;
 
@@ -33,14 +33,14 @@ public class TaskController {
 				}
 				break;
 			case FREQUENCY:
-				throw new NotImplementedException();
-				// this.taskWindow = new FrequencyTaskWindow(this,
-				// executionParameters);
+				// throw new NotImplementedException();
+				this.taskWindow = new FrequencyTaskWindow(this,
+						executionParameters);
 				// this.executionTask = new FrequencyExecutionTask(
 				// executionParameters, taskWindow, 0);
 				// this.executionTask.execute();
-				//
-				// break;
+
+				break;
 			default:
 				break;
 			}
