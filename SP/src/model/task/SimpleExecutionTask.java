@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import model.ExecutionParameters;
@@ -16,29 +15,6 @@ public class SimpleExecutionTask extends ExecutionTask {
 			TaskWindow taskWindow, int taskId) throws ClassNotFoundException,
 			SQLException {
 		super(executionParameters, taskWindow, taskId);
-	}
-
-	@Override
-	protected Void doInBackground() throws Exception {
-		try {
-			final String[] orderInserts = fileUtils
-					.getOrderInserts(executionParameters
-							.getNumberOfDataInsertsInTransaction());
-			final Map<Integer, String[]> lineItemsInserts = fileUtils
-					.getLineItemsInsertsSet(executionParameters
-							.getNumberOfDataInsertsInTransaction());
-
-			executionLoop(orderInserts, lineItemsInserts);
-		} finally {
-			latch.awaitZero();
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(taskWindow,
-						"Problem with closing connection !");
-			}
-		}
-		return null;
 	}
 
 	@Override

@@ -4,16 +4,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import model.ConnectionFactory;
 import model.DataFromFileReader;
 import model.ExecutionParameters;
 import utils.Latch;
 import view.taskwindow.TaskWindow;
 
-public abstract class ExecutionTask extends SwingWorker<Void, Void> {
+public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 
 	protected final ExecutionParameters executionParameters;
 	protected final TaskWindow taskWindow;
@@ -30,12 +28,12 @@ public abstract class ExecutionTask extends SwingWorker<Void, Void> {
 		this.taskId = taskId;
 		this.latch = new Latch(executionParameters.getNumberOfTransactions());
 		this.fileUtils = DataFromFileReader.getInstance();
-		this.connection = ConnectionFactory
-				.createConnection(executionParameters.getConnectionParameters());
+		this.connection = null;// ConnectionFactory.createConnection(executionParameters.getConnectionParameters());
 	}
 
 	@Override
-	protected Void doInBackground() throws Exception {
+	protected Long doInBackground() throws Exception {
+		long startTime = System.currentTimeMillis();
 		try {
 			final String[] orderInserts = fileUtils
 					.getOrderInserts(executionParameters
@@ -47,14 +45,14 @@ public abstract class ExecutionTask extends SwingWorker<Void, Void> {
 			executionLoop(orderInserts, lineItemsInserts);
 		} finally {
 			latch.awaitZero();
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(taskWindow,
-						"Problem with closing connection !");
-			}
+			// try {
+			// connection.close();
+			// } catch (SQLException e) {
+			// JOptionPane.showMessageDialog(taskWindow,
+			// "Problem with closing connection !");
+			// }
 		}
-		return null;
+		return System.currentTimeMillis() - startTime;
 	}
 
 	protected abstract void executionLoop(final String[] orderInserts,

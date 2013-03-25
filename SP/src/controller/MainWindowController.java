@@ -39,9 +39,9 @@ public class MainWindowController {
 				public void run() {
 					mainWindow.getNumberOfDataInsertsInTransaction()
 							.setValue(5);
-					mainWindow.getIntervalBetweenCommits().setValue(5);
+					mainWindow.getIntervalBetweenCommits().setValue(500);
 					mainWindow.getNumberOfTasks().setValue(1);
-					mainWindow.getNumberOfTransactions().setValue(15);
+					mainWindow.getNumberOfTransactions().setValue(5);
 					mainWindow.getWarehouseServerAddress().setText(
 							"25.165.194.88");
 					mainWindow.getWarehousePortNumber().setText("1521");
@@ -51,7 +51,7 @@ public class MainWindowController {
 					mainWindow.getWarehouseDatabaseType().setSelectedItem(
 							DatabaseType.ORACLE);
 					mainWindow.getExecutionTaskType().setSelectedItem(
-							TaskType.SIMPLE);
+							TaskType.FREQUENCY);
 				}
 			});
 		}

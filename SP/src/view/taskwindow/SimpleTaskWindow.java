@@ -10,7 +10,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
@@ -82,8 +81,7 @@ public class SimpleTaskWindow extends TaskWindow {
 
 		NumberAxis numberAxis = (NumberAxis) plot.getDomainAxis();
 		numberAxis.setTickMarkPaint(Color.green);
-		final TickUnits standardUnits = ComponentUtils.prepareChartUnits();
-		numberAxis.setStandardTickUnits(standardUnits);
+		numberAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
 		return new ChartPanel(chart);
 	}
 

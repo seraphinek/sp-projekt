@@ -13,16 +13,20 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		final LoadingWindow loadingWindow = new LoadingWindow();
-
-		SwingUtilities.invokeLater(new Runnable() {
-
+		Thread startupThread = new Thread() {
 			@Override
 			public void run() {
 				DataFromFileReader.getInstance();
-				new MainWindowController();
-				loadingWindow.dispose();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						new MainWindowController();
+						loadingWindow.dispose();
+					};
+				});
 			};
-		});
+		};
+		startupThread.run();
 
 	}
 }
