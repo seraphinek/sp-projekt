@@ -21,7 +21,7 @@ public class FrequencyTaskWindow extends TaskWindow {
 
 	private static final long serialVersionUID = -768907304400779219L;
 	private int numberOfResults = 0;
-	private final double currentAverage = 0;
+	private double currentAverage = 0;
 	XYSeries averageExecutionTimeSeries;
 
 	public FrequencyTaskWindow(TaskController controller,
@@ -53,20 +53,22 @@ public class FrequencyTaskWindow extends TaskWindow {
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
 
-		NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-		domainAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
+		// NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+		// domainAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
 
 		return new ChartPanel(chart);
 	}
 
 	@Override
 	public void updateChart(long transactionExecutionTime, int taskNumber) {
-		int currentSubResult = numberOfResults++
+		int currentSubResult = numberOfResults
 				% executionParameters.getNumberOfTransactions();
-		double newAverage = (currentAverage * currentSubResult - 1 + transactionExecutionTime)
+		double newAverage = (currentAverage * currentSubResult + transactionExecutionTime)
 				/ (currentSubResult + 1);
-		System.out.println("update chart " + numberOfResults + " average "
+		System.out.println("ID:" + currentSubResult + ",ET:"
+				+ transactionExecutionTime + ",OA:" + currentAverage + ",NA:"
 				+ newAverage);
+		currentAverage = newAverage;
 		if (currentSubResult > 0) {
 			averageExecutionTimeSeries.update(
 					new Double((double) executionParameters
@@ -76,14 +78,20 @@ public class FrequencyTaskWindow extends TaskWindow {
 									.getIntervalBetweenTransactions()),
 					new Double(newAverage));
 		} else {
-
 			averageExecutionTimeSeries.add(
 					(double) executionParameters.getNumberOfTransactions()
 							* 1000
 							/ executionParameters
 									.getIntervalBetweenTransactions(),
 					transactionExecutionTime);
-
 		}
+		numberOfResults++;
 	}
+
+	@Override
+	public void resetCounters() {
+		numberOfResults = 0;
+		currentAverage = 0;
+	}
+
 }

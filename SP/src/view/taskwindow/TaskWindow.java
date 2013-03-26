@@ -34,4 +34,6 @@ public abstract class TaskWindow extends JDialog {
 
 	public abstract void updateChart(long transactionExecutionTime,
 			int taskNumber);
+
+	public abstract void resetCounters();
 }

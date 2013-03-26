@@ -2,10 +2,14 @@ package model.task;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import model.ConnectionFactory;
 import model.DataFromFileReader;
 import model.ExecutionParameters;
 import utils.Latch;
@@ -29,7 +33,8 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 		this.taskId = taskId;
 		this.latch = new Latch(executionParameters.getNumberOfTransactions());
 		this.fileUtils = DataFromFileReader.getInstance();
-		this.connection = null;// ConnectionFactory.createConnection(executionParameters.getConnectionParameters());
+		this.connection = ConnectionFactory
+				.createConnection(executionParameters.getConnectionParameters());
 	}
 
 	@Override
@@ -42,16 +47,16 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 			final Map<Integer, String[]> lineItemsInserts = fileUtils
 					.getLineItemsInsertsSet(executionParameters
 							.getNumberOfDataInsertsInTransaction());
-
+			// tuneDatabase();
 			executionLoop(orderInserts, lineItemsInserts);
 		} finally {
 			latch.awaitZero();
-			// try {
-			// connection.close();
-			// } catch (SQLException e) {
-			// JOptionPane.showMessageDialog(taskWindow,
-			// "Problem with closing connection !");
-			// }
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(taskWindow,
+						"Problem with closing connection !");
+			}
 		}
 
 		return summaryTime;
@@ -59,4 +64,31 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 
 	protected abstract void executionLoop(final String[] orderInserts,
 			final Map<Integer, String[]> lineItemsInserts);
+
+	private void tuneDatabase() {
+		System.out.println(new Date() + "|Preparing data for tuning");
+		final String[] orderInserts = fileUtils.getOrderInserts(5);
+		final Map<Integer, String[]> lineItemsInserts = fileUtils
+				.getLineItemsInsertsSet(25);
+		System.out.println(new Date()
+				+ "|Data for tuning prepared, starting tuning...");
+		for (int i = 0; i < 25; i++) {
+			for (int j = 0; j < 5; j++) {
+				Statement statement = null;
+				try {
+					statement = connection.createStatement();
+					statement.addBatch(orderInserts[j]);
+					for (String lineItemInsert : lineItemsInserts.get(j)) {
+						statement.addBatch(lineItemInsert);
+					}
+					statement.executeBatch();
+					statement.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(new Date() + "|Tuning finished.");
+	}
+
 }

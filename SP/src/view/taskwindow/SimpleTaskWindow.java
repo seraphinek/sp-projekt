@@ -103,4 +103,10 @@ public class SimpleTaskWindow extends TaskWindow {
 			averageTimeSeries.add(currentResult + 1, newAverage);
 		}
 	}
+
+	@Override
+	public void resetCounters() {
+		// TODO Auto-generated method stub
+
+	}
 }
