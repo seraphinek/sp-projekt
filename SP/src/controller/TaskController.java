@@ -1,7 +1,6 @@
 package controller;
 
 import java.sql.SQLException;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
 
@@ -37,34 +36,9 @@ public class TaskController {
 			case FREQUENCY:
 				this.taskWindow = new FrequencyTaskWindow(this,
 						executionParameters);
-				Long summaryTime = 0L;
-				do {
-					// executionParameters
-					// .setIntervalBetweenTransactions(executionParameters
-					// .getIntervalBetweenTransactions()
-					// - executionParameters
-					// .getIntervalBetweenTransactions()
-					// / 10);
-					System.out
-							.println("Wystartowano nowe zadanie o czêstoœci :"
-									+ executionParameters
-											.getIntervalBetweenTransactions());
-					this.executionTask = new FrequencyExecutionTask(
-							executionParameters, taskWindow, 0);
-					this.executionTask.execute();
-					try {
-						this.executionTask.get();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} while (summaryTime < executionParameters
-						.getIntervalBetweenTransactions());
-				System.out.println("Zakoñczono - krztusi siê dla : "
-						+ executionParameters.getIntervalBetweenTransactions());
+				this.executionTask = new FrequencyExecutionTask(
+						executionParameters, taskWindow, 0);
+				this.executionTask.execute();
 				break;
 			default:
 				break;

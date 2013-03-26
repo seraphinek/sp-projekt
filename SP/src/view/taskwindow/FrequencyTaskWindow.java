@@ -35,59 +35,55 @@ public class FrequencyTaskWindow extends TaskWindow {
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(averageExecutionTimeSeries);
 
-		// create the chart...
 		final JFreeChart chart = ChartFactory.createXYLineChart(
-				"Line Chart Demo 6", // chart title
-				"Frequency of sql queries", // x axis label
-				"Execution time", // y axis label
-				dataset, // data
-				PlotOrientation.VERTICAL, true, // include legend
-				true, // tooltips
-				false // urls
-				);
+				"Data insertion frequency benchmark",
+				"Transactions per second", "Average execution time", dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 
-		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
 		chart.setBackgroundPaint(Color.white);
 
-		// final StandardLegend legend = (StandardLegend) chart.getLegend();
-		// legend.setDisplaySeriesShapes(true);
-
-		// get a reference to the plot for further customisation...
 		final XYPlot plot = chart.getXYPlot();
 		plot.setBackgroundPaint(Color.lightGray);
-		// plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setRangeGridlinePaint(Color.white);
 
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		plot.setRenderer(renderer);
 
-		// change the auto tick unit selection to integer units only...
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
-		// OPTIONAL CUSTOMISATION COMPLETED.
+
+		NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+		domainAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
 
 		return new ChartPanel(chart);
 	}
 
 	@Override
 	public void updateChart(long transactionExecutionTime, int taskNumber) {
-		numberOfResults++;
-
-		int currentSubResult = numberOfResults
-				% executionParameters.getNumberOfTransactions() + 1;
+		int currentSubResult = numberOfResults++
+				% executionParameters.getNumberOfTransactions();
 		double newAverage = (currentAverage * currentSubResult - 1 + transactionExecutionTime)
-				/ currentSubResult;
-		// int currentSample = numberOfResults
-		// / executionParameters.getNumberOfTransactions();
+				/ (currentSubResult + 1);
 		System.out.println("update chart " + numberOfResults + " average "
 				+ newAverage);
-		// if (currentSubResult != 1) {
-		// averageExecutionTimeSeries.update(new Integer(currentSample),
-		// new Double(newAverage));
-		// } else {
-		averageExecutionTimeSeries.add(numberOfResults,
-				transactionExecutionTime);
-		// }
+		if (currentSubResult > 0) {
+			averageExecutionTimeSeries.update(
+					new Double((double) executionParameters
+							.getNumberOfTransactions()
+							* 1000
+							/ executionParameters
+									.getIntervalBetweenTransactions()),
+					new Double(newAverage));
+		} else {
+
+			averageExecutionTimeSeries.add(
+					(double) executionParameters.getNumberOfTransactions()
+							* 1000
+							/ executionParameters
+									.getIntervalBetweenTransactions(),
+					transactionExecutionTime);
+
+		}
 	}
 }

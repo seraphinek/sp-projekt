@@ -19,6 +19,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 	protected final DataFromFileReader fileUtils;
 	protected final int taskId;
 	protected final Latch latch;
+	protected long summaryTime;
 
 	public ExecutionTask(ExecutionParameters executionParameters,
 			TaskWindow taskWindow, int taskId) throws ClassNotFoundException,
@@ -33,7 +34,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 
 	@Override
 	protected Long doInBackground() throws Exception {
-		long startTime = System.currentTimeMillis();
+
 		try {
 			final String[] orderInserts = fileUtils
 					.getOrderInserts(executionParameters
@@ -52,7 +53,8 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 			// "Problem with closing connection !");
 			// }
 		}
-		return System.currentTimeMillis() - startTime;
+
+		return summaryTime;
 	}
 
 	protected abstract void executionLoop(final String[] orderInserts,
