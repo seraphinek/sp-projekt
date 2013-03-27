@@ -1,6 +1,7 @@
 package view.taskwindow;
 
 import java.awt.Color;
+import java.text.NumberFormat;
 
 import model.ExecutionParameters;
 
@@ -8,9 +9,12 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardXYItemLabelGenerator;
+import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -31,13 +35,13 @@ public class FrequencyTaskWindow extends TaskWindow {
 
 	@Override
 	protected ChartPanel createChart() {
-		averageExecutionTimeSeries = new XYSeries("Average execution time");
+		averageExecutionTimeSeries = new XYSeries("Average execution delay");
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(averageExecutionTimeSeries);
 
 		final JFreeChart chart = ChartFactory.createXYLineChart(
 				"Data insertion frequency benchmark",
-				"Transactions per second", "Average execution time", dataset,
+				"Transactions per second", "Average execution delay", dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 
 		chart.setBackgroundPaint(Color.white);
@@ -47,7 +51,29 @@ public class FrequencyTaskWindow extends TaskWindow {
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setRangeGridlinePaint(Color.white);
 
+		NumberFormat format = NumberFormat.getNumberInstance();
+		format.setMaximumFractionDigits(2);
+		XYItemLabelGenerator generator = 
+				new StandardXYItemLabelGenerator("{1}, {2}", format, format)
+		{
+			private static final long serialVersionUID = 559322235470226159L;
+
+			@Override
+			public String generateLabel(XYDataset dataset, int series, int item) {
+				
+				double numerOfTransactionsPerSecond = dataset.getXValue(series, item);
+				int numerOfTransactions = executionParameters.getNumberOfTransactions();
+				double interval = Math.round((numerOfTransactions * 1000) / numerOfTransactionsPerSecond); 
+				
+				return Math.round(numerOfTransactionsPerSecond)+"/"+interval;
+			}
+		};
+		
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		renderer.setBaseItemLabelGenerator(generator);
+		renderer.setBaseItemLabelsVisible(true);
+		renderer.setSeriesItemLabelsVisible(0,true);
+		
 		plot.setRenderer(renderer);
 
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -63,7 +89,7 @@ public class FrequencyTaskWindow extends TaskWindow {
 	public void updateChart(long transactionExecutionTime, int taskNumber) {
 		int currentSubResult = numberOfResults
 				% executionParameters.getNumberOfTransactions();
-		double newAverage = (currentAverage * currentSubResult + transactionExecutionTime)
+		double newAverage = (currentAverage * currentSubResult + (transactionExecutionTime - executionParameters.getIntervalBetweenTransactions()))
 				/ (currentSubResult + 1);
 		System.out.println("ID:" + currentSubResult + ",ET:"
 				+ transactionExecutionTime + ",OA:" + currentAverage + ",NA:"

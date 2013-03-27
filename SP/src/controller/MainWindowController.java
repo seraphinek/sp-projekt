@@ -38,8 +38,8 @@ public class MainWindowController {
 				@Override
 				public void run() {
 					mainWindow.getNumberOfDataInsertsInTransaction()
-							.setValue(5);
-					mainWindow.getIntervalBetweenCommits().setValue(500);
+							.setValue(20);
+					mainWindow.getIntervalBetweenCommits().setValue(300);
 					mainWindow.getNumberOfTasks().setValue(1);
 					mainWindow.getNumberOfTransactions().setValue(5);
 					mainWindow.getWarehouseServerAddress().setText(

@@ -84,11 +84,11 @@ public class FrequencyExecutionTask extends ExecutionTask {
 	protected void done() {
 		super.done();
 		if (summaryTime / executionParameters.getNumberOfTransactions() < executionParameters
-				.getIntervalBetweenTransactions()) {
+				.getIntervalBetweenTransactions()*1.5) {
 			taskWindow.resetCounters();
 			executionParameters
 					.setIntervalBetweenTransactions((int) (executionParameters
-							.getIntervalBetweenTransactions() * 9d / 10d));
+							.getIntervalBetweenTransactions() * 0.9));
 			System.out.println("Zlecam kolejne zadanie o id: " + (taskId + 1)
 					+ " oraz interwale: "
 					+ executionParameters.getIntervalBetweenTransactions());
