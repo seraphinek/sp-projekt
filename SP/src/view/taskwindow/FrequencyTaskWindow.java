@@ -19,6 +19,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import utils.ComponentUtils;
+import view.ExtendedChartPanel;
 import controller.TaskController;
 
 public class FrequencyTaskWindow extends TaskWindow {
@@ -53,44 +54,44 @@ public class FrequencyTaskWindow extends TaskWindow {
 
 		NumberFormat format = NumberFormat.getNumberInstance();
 		format.setMaximumFractionDigits(2);
-		XYItemLabelGenerator generator = 
-				new StandardXYItemLabelGenerator("{1}, {2}", format, format)
-		{
+		XYItemLabelGenerator generator = new StandardXYItemLabelGenerator(
+				"{1}, {2}", format, format) {
 			private static final long serialVersionUID = 559322235470226159L;
 
 			@Override
 			public String generateLabel(XYDataset dataset, int series, int item) {
-				
-				double numerOfTransactionsPerSecond = dataset.getXValue(series, item);
-				int numerOfTransactions = executionParameters.getNumberOfTransactions();
-				double interval = Math.round((numerOfTransactions * 1000) / numerOfTransactionsPerSecond); 
-				
-				return Math.round(numerOfTransactionsPerSecond)+"/"+interval;
+
+				double numerOfTransactionsPerSecond = dataset.getXValue(series,
+						item);
+				int numerOfTransactions = executionParameters
+						.getNumberOfTransactions();
+				double interval = Math.round((numerOfTransactions * 1000)
+						/ numerOfTransactionsPerSecond);
+
+				return Math.round(numerOfTransactionsPerSecond) + "/"
+						+ interval;
 			}
 		};
-		
+
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 		renderer.setBaseItemLabelGenerator(generator);
 		renderer.setBaseItemLabelsVisible(true);
-		renderer.setSeriesItemLabelsVisible(0,true);
-		
+		renderer.setSeriesItemLabelsVisible(0, true);
+
 		plot.setRenderer(renderer);
 
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
 
-		// NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-		// domainAxis.setStandardTickUnits(ComponentUtils.prepareChartUnits());
-
-		return new ChartPanel(chart);
+		return new ExtendedChartPanel(chart);
 	}
 
 	@Override
 	public void updateChart(long transactionExecutionTime, int taskNumber) {
 		int currentSubResult = numberOfResults
 				% executionParameters.getNumberOfTransactions();
-		double newAverage = (currentAverage * currentSubResult + (transactionExecutionTime - executionParameters.getIntervalBetweenTransactions()))
-				/ (currentSubResult + 1);
+		double newAverage = (currentAverage * currentSubResult + (transactionExecutionTime - executionParameters
+				.getIntervalBetweenTransactions())) / (currentSubResult + 1);
 		System.out.println("ID:" + currentSubResult + ",ET:"
 				+ transactionExecutionTime + ",OA:" + currentAverage + ",NA:"
 				+ newAverage);

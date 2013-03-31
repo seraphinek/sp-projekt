@@ -84,7 +84,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 	protected void done() {
 		super.done();
 		if (summaryTime / executionParameters.getNumberOfTransactions() < executionParameters
-				.getIntervalBetweenTransactions()*1.5) {
+				.getIntervalBetweenTransactions() * 1.5) {
 			taskWindow.resetCounters();
 			executionParameters
 					.setIntervalBetweenTransactions((int) (executionParameters

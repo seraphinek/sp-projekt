@@ -65,6 +65,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 	protected abstract void executionLoop(final String[] orderInserts,
 			final Map<Integer, String[]> lineItemsInserts);
 
+	@SuppressWarnings("unused")
 	private void tuneDatabase() {
 		System.out.println(new Date() + "|Preparing data for tuning");
 		final String[] orderInserts = fileUtils.getOrderInserts(5);
