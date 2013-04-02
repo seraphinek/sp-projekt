@@ -66,7 +66,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 			final Map<Integer, String[]> lineItemsInserts);
 
 	@SuppressWarnings("unused")
-	private void tuneDatabase() {
+	private void tuneDatabase() throws SQLException {
 		System.out.println(new Date() + "|Preparing data for tuning");
 		final String[] orderInserts = fileUtils.getOrderInserts(5);
 		final Map<Integer, String[]> lineItemsInserts = fileUtils
@@ -89,6 +89,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 				}
 			}
 		}
+		connection.commit();
 		System.out.println(new Date() + "|Tuning finished.");
 	}
 

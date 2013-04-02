@@ -50,6 +50,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 							e.printStackTrace();
 						}
 					}
+					connection.commit();
 					result = System.currentTimeMillis() - start;
 					return result;
 				}

@@ -40,6 +40,7 @@ public class SimpleExecutionTask extends ExecutionTask {
 								statement.addBatch(lineItemInsert);
 							}
 							statement.executeBatch();
+							connection.commit();
 							statement.close();
 						} catch (SQLException e) {
 							e.printStackTrace();
