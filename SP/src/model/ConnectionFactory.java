@@ -5,10 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionFactory {
+	public static Connection connection; 
+	
 	public static Connection createConnection(
 			ConnectionParameters connectionParameters) throws SQLException,
 			ClassNotFoundException {
-		Connection connection = null;
+		
 		String connectionString = "";
 
 		switch (connectionParameters.getDatabaseType()) {
@@ -44,4 +46,5 @@ public class ConnectionFactory {
 
 		return connection;
 	}
+	
 }

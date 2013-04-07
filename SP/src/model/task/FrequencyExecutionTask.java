@@ -1,5 +1,6 @@
 package model.task;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.TimerTask;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import model.ConnectionFactory;
 import model.ExecutionParameters;
 import view.taskwindow.TaskWindow;
 
@@ -19,11 +21,18 @@ public class FrequencyExecutionTask extends ExecutionTask {
 			SQLException {
 		super(executionParameters, taskWindow, taskId);
 	}
+	
+	public FrequencyExecutionTask(ExecutionParameters executionParameters,
+			TaskWindow taskWindow, int taskId, Connection connection) throws ClassNotFoundException,
+			SQLException {
+		super(executionParameters, taskWindow, taskId, connection);
+	}
 
 	@Override
 	protected void executionLoop(final String[] orderInserts,
 			final Map<Integer, String[]> lineItemsInserts) {
-		for (int i = 0; i < executionParameters.getNumberOfTransactions() + 5; i++) {
+		
+		for (int i = 0; i < executionParameters.getNumberOfTransactions() + 1; i++) {
 			final int x = i;
 
 			final SwingWorker<Long, Void> swingWorker = new SwingWorker<Long, Void>() {
@@ -33,31 +42,33 @@ public class FrequencyExecutionTask extends ExecutionTask {
 
 				@Override
 				protected Long doInBackground() throws Exception {
+					Statement statement = connection.createStatement();
+					
 					start = System.currentTimeMillis();
 					for (int j = 0; j < executionParameters
 							.getNumberOfDataInsertsInTransaction(); j++) {
-						Statement statement = null;
+						
 						try {
-							statement = connection.createStatement();
 							statement.addBatch(orderInserts[j]);
 							for (String lineItemInsert : lineItemsInserts
 									.get(j)) {
 								statement.addBatch(lineItemInsert);
 							}
-							statement.executeBatch();
-							statement.close();
 						} catch (SQLException e) {
 							e.printStackTrace();
 						}
 					}
+					statement.executeBatch();
 					connection.commit();
+					statement.close();
+					
 					result = System.currentTimeMillis() - start;
 					return result;
 				}
 
 				@Override
 				protected void done() {
-					if (x >= 5) {
+					if (x >= 1) {
 						try {
 							get();
 							taskWindow.updateChart(result, taskId);
@@ -84,6 +95,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 	@Override
 	protected void done() {
 		super.done();
+		
 		if (summaryTime / executionParameters.getNumberOfTransactions() < executionParameters
 				.getIntervalBetweenTransactions() * 1.5) {
 			taskWindow.resetCounters();
@@ -96,7 +108,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 			ExecutionTask executionTask;
 			try {
 				executionTask = new FrequencyExecutionTask(executionParameters,
-						taskWindow, taskId + 1);
+						taskWindow, taskId + 1, ConnectionFactory.connection);
 				executionTask.execute();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -104,6 +116,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 				e.printStackTrace();
 			}
 		} else {
+			closeConnection();
 			JOptionPane.showMessageDialog(
 					taskWindow,
 					"Upper bound reached for "

@@ -21,7 +21,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 	protected final TaskWindow taskWindow;
 	protected final Connection connection;
 	protected final DataFromFileReader fileUtils;
-	protected final int taskId;
+	protected int taskId;
 	protected final Latch latch;
 	protected long summaryTime;
 
@@ -34,7 +34,18 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 		this.latch = new Latch(executionParameters.getNumberOfTransactions());
 		this.fileUtils = DataFromFileReader.getInstance();
 		this.connection = ConnectionFactory
-				.createConnection(executionParameters.getConnectionParameters());
+					.createConnection(executionParameters.getConnectionParameters());
+	}
+	
+	public ExecutionTask(ExecutionParameters executionParameters,
+			TaskWindow taskWindow, int taskId, Connection connection) throws ClassNotFoundException,
+			SQLException {
+		this.executionParameters = executionParameters;
+		this.taskWindow = taskWindow;
+		this.taskId = taskId;
+		this.latch = new Latch(executionParameters.getNumberOfTransactions());
+		this.fileUtils = DataFromFileReader.getInstance();
+		this.connection = connection;
 	}
 
 	@Override
@@ -51,15 +62,19 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 			executionLoop(orderInserts, lineItemsInserts);
 		} finally {
 			latch.awaitZero();
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(taskWindow,
-						"Problem with closing connection !");
-			}
 		}
 
 		return summaryTime;
+	}
+	
+	protected void closeConnection()
+	{
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(taskWindow,
+					"Problem with closing connection !");
+		}
 	}
 
 	protected abstract void executionLoop(final String[] orderInserts,
@@ -89,7 +104,7 @@ public abstract class ExecutionTask extends SwingWorker<Long, Void> {
 				}
 			}
 		}
-		connection.commit();
+		//connection.commit();
 		System.out.println(new Date() + "|Tuning finished.");
 	}
 
