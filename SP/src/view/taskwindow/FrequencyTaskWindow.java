@@ -28,6 +28,7 @@ public class FrequencyTaskWindow extends TaskWindow {
 	private int numberOfResults = 0;
 	private double currentAverage = 0;
 	XYSeries averageExecutionTimeSeries;
+	XYSeries intervalBetweenExecutionSeries;
 
 	public FrequencyTaskWindow(TaskController controller,
 			ExecutionParameters executionParameters) {
@@ -37,9 +38,11 @@ public class FrequencyTaskWindow extends TaskWindow {
 	@Override
 	protected ChartPanel createChart() {
 		averageExecutionTimeSeries = new XYSeries("Average execution delay");
+		intervalBetweenExecutionSeries = new XYSeries(
+				"Interval between execution");
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(averageExecutionTimeSeries);
-
+		dataset.addSeries(intervalBetweenExecutionSeries);
 		final JFreeChart chart = ChartFactory.createXYLineChart(
 				"Data insertion frequency benchmark",
 				"Transactions per second", "Average execution delay", dataset,
@@ -77,7 +80,7 @@ public class FrequencyTaskWindow extends TaskWindow {
 		renderer.setBaseItemLabelGenerator(generator);
 		renderer.setBaseItemLabelsVisible(true);
 		renderer.setSeriesItemLabelsVisible(0, true);
-
+		renderer.setSeriesVisible(1, false);
 		plot.setRenderer(renderer);
 
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -111,6 +114,12 @@ public class FrequencyTaskWindow extends TaskWindow {
 							/ executionParameters
 									.getIntervalBetweenTransactions(),
 					transactionExecutionTime);
+			intervalBetweenExecutionSeries.add(
+					(double) executionParameters.getNumberOfTransactions()
+							* 1000
+							/ executionParameters
+									.getIntervalBetweenTransactions(),
+					executionParameters.getIntervalBetweenTransactions());
 		}
 		numberOfResults++;
 	}

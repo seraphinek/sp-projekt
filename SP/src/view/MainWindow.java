@@ -36,6 +36,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JTextField warehousePortNumber;
 	private JSpinner intervalBetweenCommits;
 	private JSpinner numberOfTasks;
+	private JSpinner materializedViewRefreshTime;
 	private JButton defaultButton;
 	private JButton executeTaskButton;
 	private JButton exitButton;
@@ -91,10 +92,27 @@ public class MainWindow extends JFrame implements ActionListener {
 		prepareWarehouseParametersFields(parametersPanel);
 		prepareNumberOfTransactionsParametersFields(parametersPanel);
 		prepareNumberOfDataInsertsInTranactionParametersFields(parametersPanel);
+		prepareMaterializedViewRefreshTimeParametersFields(parametersPanel);
 		prepareBreakBetweenCommitsParametersFields(parametersPanel);
 		prepareNumberOfTasksParametersFields(parametersPanel);
 		prepareExecutionTaskTypeParametersFields(parametersPanel);
 		return parametersPanel;
+	}
+
+	private void prepareMaterializedViewRefreshTimeParametersFields(
+			JPanel paramsPanel) {
+		JPanel materializedViewRefreshTimePanel = new JPanel();
+		JLabel materializedViewRefreshTimeLabel = new JLabel(
+				"Materialized view refresh time (in ms):");
+		materializedViewRefreshTimeLabel.setPreferredSize(new Dimension(
+				LABEL_WIDTH, FIELD_HEIGHT));
+		materializedViewRefreshTimeLabel.setLabelFor(numberOfTasks);
+		materializedViewRefreshTimePanel.add(materializedViewRefreshTimeLabel);
+		setMaterializedViewRefreshTime(new JSpinner(getSpinnerNumberModel()));
+		getMaterializedViewRefreshTime().setPreferredSize(
+				new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+		materializedViewRefreshTimePanel.add(getMaterializedViewRefreshTime());
+		paramsPanel.add(materializedViewRefreshTimePanel);
 	}
 
 	private void prepareNumberOfTasksParametersFields(JPanel paramsPanel) {
@@ -321,6 +339,15 @@ public class MainWindow extends JFrame implements ActionListener {
 
 	public JSpinner getNumberOfTasks() {
 		return numberOfTasks;
+	}
+
+	public JSpinner getMaterializedViewRefreshTime() {
+		return materializedViewRefreshTime;
+	}
+
+	public void setMaterializedViewRefreshTime(
+			JSpinner materializedViewRefreshTime) {
+		this.materializedViewRefreshTime = materializedViewRefreshTime;
 	}
 
 }

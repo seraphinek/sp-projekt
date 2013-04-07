@@ -37,8 +37,9 @@ public class MainWindowController {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					mainWindow.getNumberOfDataInsertsInTransaction()
-							.setValue(20);
+					mainWindow.getNumberOfDataInsertsInTransaction().setValue(
+							20);
+					mainWindow.getMaterializedViewRefreshTime().setValue(3000);
 					mainWindow.getIntervalBetweenCommits().setValue(300);
 					mainWindow.getNumberOfTasks().setValue(1);
 					mainWindow.getNumberOfTransactions().setValue(5);
@@ -87,6 +88,8 @@ public class MainWindowController {
 				.getNumberOfTransactions().getValue());
 		executionParameters.setTaskType((TaskType) mainWindow
 				.getExecutionTaskType().getSelectedItem());
+		executionParameters.setMaterializedViewRefreshTime((Integer) mainWindow
+				.getMaterializedViewRefreshTime().getValue());
 		executionParameters.setNumberOfTasks((Integer) mainWindow
 				.getNumberOfTasks().getValue());
 		ConnectionParameters connectionParameters = new ConnectionParameters();
