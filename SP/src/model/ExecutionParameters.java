@@ -4,7 +4,7 @@ public class ExecutionParameters {
 	private int numberOfTransactions;
 	private int numberOfDataInsertsInTransaction;
 	private int intervalBetweenTransactions;
-	private int materializedViewRefreshTime;
+	private int materializedViewRefreshTransactionLimit;
 	private int numberOfTasks;
 	private TaskType taskType;
 	private ConnectionParameters connectionParameters;
@@ -60,12 +60,12 @@ public class ExecutionParameters {
 		this.numberOfTasks = numberOfTasks;
 	}
 
-	public int getMaterializedViewRefreshTime() {
-		return materializedViewRefreshTime;
+	public int getMaterializedViewRefreshTransactionLimit() {
+		return materializedViewRefreshTransactionLimit;
 	}
 
-	public void setMaterializedViewRefreshTime(int materializedViewRefreshTime) {
-		this.materializedViewRefreshTime = materializedViewRefreshTime;
+	public void setMaterializedViewRefreshTransactionLimit(int materializedViewRefreshTransactionLimit) {
+		this.materializedViewRefreshTransactionLimit = materializedViewRefreshTransactionLimit;
 	}
 
 }

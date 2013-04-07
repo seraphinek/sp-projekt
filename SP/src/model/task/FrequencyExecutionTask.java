@@ -20,18 +20,19 @@ public class FrequencyExecutionTask extends ExecutionTask {
 			TaskWindow taskWindow, int taskId) throws ClassNotFoundException,
 			SQLException {
 		super(executionParameters, taskWindow, taskId);
+		setTriggerLimitsInDatabase();
 	}
-	
+
 	public FrequencyExecutionTask(ExecutionParameters executionParameters,
-			TaskWindow taskWindow, int taskId, Connection connection) throws ClassNotFoundException,
-			SQLException {
+			TaskWindow taskWindow, int taskId, Connection connection)
+			throws ClassNotFoundException, SQLException {
 		super(executionParameters, taskWindow, taskId, connection);
 	}
 
 	@Override
 	protected void executionLoop(final String[] orderInserts,
 			final Map<Integer, String[]> lineItemsInserts) {
-		
+
 		for (int i = 0; i < executionParameters.getNumberOfTransactions() + 1; i++) {
 			final int x = i;
 
@@ -43,11 +44,11 @@ public class FrequencyExecutionTask extends ExecutionTask {
 				@Override
 				protected Long doInBackground() throws Exception {
 					Statement statement = connection.createStatement();
-					
+
 					start = System.currentTimeMillis();
 					for (int j = 0; j < executionParameters
 							.getNumberOfDataInsertsInTransaction(); j++) {
-						
+
 						try {
 							statement.addBatch(orderInserts[j]);
 							for (String lineItemInsert : lineItemsInserts
@@ -61,7 +62,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 					statement.executeBatch();
 					connection.commit();
 					statement.close();
-					
+
 					result = System.currentTimeMillis() - start;
 					return result;
 				}
@@ -95,7 +96,7 @@ public class FrequencyExecutionTask extends ExecutionTask {
 	@Override
 	protected void done() {
 		super.done();
-		
+
 		if (summaryTime / executionParameters.getNumberOfTransactions() < executionParameters
 				.getIntervalBetweenTransactions() * 1.5) {
 			taskWindow.resetCounters();
@@ -125,5 +126,17 @@ public class FrequencyExecutionTask extends ExecutionTask {
 							+ executionParameters
 									.getIntervalBetweenTransactions() + "ms");
 		}
+	}
+
+	protected void setTriggerLimitsInDatabase() throws SQLException {
+		Statement statement = connection.createStatement();
+		statement.addBatch("update transactionsLimit set limit="
+				+ executionParameters
+						.getMaterializedViewRefreshTransactionLimit());
+		statement.addBatch("update insertsPerTransactionLimit set limit="
+				+ executionParameters.getNumberOfDataInsertsInTransaction());
+		statement.executeBatch();
+		connection.commit();
+		statement.close();
 	}
 }
