@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 import model.ExecutionParameters;
+import model.task.BatchSizeExecutionTask;
 import model.task.ExecutionTask;
 import model.task.FrequencyExecutionTask;
 import model.task.SimpleExecutionTask;
+import view.taskwindow.BatchSizeTaskWindow;
 import view.taskwindow.FrequencyTaskWindow;
 import view.taskwindow.SimpleTaskWindow;
 import view.taskwindow.TaskWindow;
@@ -37,6 +39,13 @@ public class TaskController {
 				this.taskWindow = new FrequencyTaskWindow(this,
 						executionParameters);
 				this.executionTask = new FrequencyExecutionTask(
+						executionParameters, taskWindow, 0);
+				this.executionTask.execute();
+				break;
+			case BATCH_SIZE:
+				this.taskWindow = new BatchSizeTaskWindow(this,
+						executionParameters);
+				this.executionTask = new BatchSizeExecutionTask(
 						executionParameters, taskWindow, 0);
 				this.executionTask.execute();
 				break;

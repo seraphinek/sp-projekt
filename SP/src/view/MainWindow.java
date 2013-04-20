@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,6 +35,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	private JSpinner numberOfTransactions;
 	private JSpinner numberOfDataInsertsInTransaction;
 	private JTextField warehousePortNumber;
+	private JCheckBox processInBatch;
 	private JSpinner intervalBetweenCommits;
 	private JSpinner numberOfTasks;
 	private JSpinner materializedViewRefreshTransactionLimit;
@@ -92,6 +94,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		prepareWarehouseParametersFields(parametersPanel);
 		prepareNumberOfTransactionsParametersFields(parametersPanel);
 		prepareNumberOfDataInsertsInTranactionParametersFields(parametersPanel);
+		prepareProcessInBatchParametersFields(parametersPanel);
 		prepareMaterializedViewRefreshTransactionLimitParametersFields(parametersPanel);
 		prepareBreakBetweenCommitsParametersFields(parametersPanel);
 		prepareNumberOfTasksParametersFields(parametersPanel);
@@ -99,19 +102,37 @@ public class MainWindow extends JFrame implements ActionListener {
 		return parametersPanel;
 	}
 
+	private void prepareProcessInBatchParametersFields(JPanel paramsPanel) {
+		JPanel processInBatchPanel = new JPanel();
+		JLabel processInBatchLabel = new JLabel(
+				"Process transactions in batches:");
+		processInBatchLabel.setPreferredSize(new Dimension(LABEL_WIDTH,
+				FIELD_HEIGHT));
+		processInBatchLabel.setLabelFor(numberOfTasks);
+		processInBatchPanel.add(processInBatchLabel);
+		processInBatch = new JCheckBox();
+		processInBatch
+				.setPreferredSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+		processInBatchPanel.add(processInBatch);
+		paramsPanel.add(processInBatchPanel);
+	}
+
 	private void prepareMaterializedViewRefreshTransactionLimitParametersFields(
 			JPanel paramsPanel) {
 		JPanel materializedViewRefreshTransactionLimitPanel = new JPanel();
 		JLabel materializedViewRefreshTransactionLimitLabel = new JLabel(
 				"Materialized view refresh tr. limit:");
-		materializedViewRefreshTransactionLimitLabel.setPreferredSize(new Dimension(
-				LABEL_WIDTH, FIELD_HEIGHT));
+		materializedViewRefreshTransactionLimitLabel
+				.setPreferredSize(new Dimension(LABEL_WIDTH, FIELD_HEIGHT));
 		materializedViewRefreshTransactionLimitLabel.setLabelFor(numberOfTasks);
-		materializedViewRefreshTransactionLimitPanel.add(materializedViewRefreshTransactionLimitLabel);
-		setMaterializedViewRefreshTransactionLimit(new JSpinner(getSpinnerNumberModel()));
-		getMaterializedViewRefreshTransactionLimit().setPreferredSize(
-				new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-		materializedViewRefreshTransactionLimitPanel.add(getMaterializedViewRefreshTransactionLimit());
+		materializedViewRefreshTransactionLimitPanel
+				.add(materializedViewRefreshTransactionLimitLabel);
+		materializedViewRefreshTransactionLimit = new JSpinner(
+				getSpinnerNumberModel());
+		materializedViewRefreshTransactionLimit.setPreferredSize(new Dimension(
+				FIELD_WIDTH, FIELD_HEIGHT));
+		materializedViewRefreshTransactionLimitPanel
+				.add(materializedViewRefreshTransactionLimit);
 		paramsPanel.add(materializedViewRefreshTransactionLimitPanel);
 	}
 
@@ -345,9 +366,8 @@ public class MainWindow extends JFrame implements ActionListener {
 		return materializedViewRefreshTransactionLimit;
 	}
 
-	public void setMaterializedViewRefreshTransactionLimit(
-			JSpinner materializedViewRefreshTransactionLimit) {
-		this.materializedViewRefreshTransactionLimit = materializedViewRefreshTransactionLimit;
+	public JCheckBox getProcessInBatch() {
+		return processInBatch;
 	}
 
 }

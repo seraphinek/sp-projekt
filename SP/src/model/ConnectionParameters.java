@@ -55,4 +55,5 @@ public class ConnectionParameters {
 	public void setDatabaseType(DatabaseType databaseType) {
 		this.databaseType = databaseType;
 	}
+
 }

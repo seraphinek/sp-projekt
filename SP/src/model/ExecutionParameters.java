@@ -6,6 +6,7 @@ public class ExecutionParameters {
 	private int intervalBetweenTransactions;
 	private int materializedViewRefreshTransactionLimit;
 	private int numberOfTasks;
+	private boolean processInBatch;
 	private TaskType taskType;
 	private ConnectionParameters connectionParameters;
 
@@ -64,8 +65,17 @@ public class ExecutionParameters {
 		return materializedViewRefreshTransactionLimit;
 	}
 
-	public void setMaterializedViewRefreshTransactionLimit(int materializedViewRefreshTransactionLimit) {
+	public void setMaterializedViewRefreshTransactionLimit(
+			int materializedViewRefreshTransactionLimit) {
 		this.materializedViewRefreshTransactionLimit = materializedViewRefreshTransactionLimit;
+	}
+
+	public boolean isProcessInBatch() {
+		return processInBatch;
+	}
+
+	public void setProcessInBatch(boolean processInBatch) {
+		this.processInBatch = processInBatch;
 	}
 
 }

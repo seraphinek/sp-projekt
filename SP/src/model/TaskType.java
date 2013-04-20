@@ -1,5 +1,5 @@
 package model;
 
 public enum TaskType {
-	SIMPLE, FREQUENCY;
+	SIMPLE, FREQUENCY, BATCH_SIZE;
 }

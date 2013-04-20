@@ -14,16 +14,16 @@ import model.ConnectionFactory;
 import model.ExecutionParameters;
 import view.taskwindow.TaskWindow;
 
-public class FrequencyExecutionTask extends ExecutionTask {
+public class BatchSizeExecutionTask extends ExecutionTask {
 
-	public FrequencyExecutionTask(ExecutionParameters executionParameters,
+	public BatchSizeExecutionTask(ExecutionParameters executionParameters,
 			TaskWindow taskWindow, int taskId) throws ClassNotFoundException,
 			SQLException {
 		super(executionParameters, taskWindow, taskId);
 		setTriggerLimitsInDatabase();
 	}
 
-	public FrequencyExecutionTask(ExecutionParameters executionParameters,
+	public BatchSizeExecutionTask(ExecutionParameters executionParameters,
 			TaskWindow taskWindow, int taskId, Connection connection)
 			throws ClassNotFoundException, SQLException {
 		super(executionParameters, taskWindow, taskId, connection);
@@ -46,31 +46,20 @@ public class FrequencyExecutionTask extends ExecutionTask {
 					Statement statement = connection.createStatement();
 					start = System.currentTimeMillis();
 
-					if (executionParameters.isProcessInBatch()) {
-						for (int j = 0; j < executionParameters
-								.getNumberOfDataInsertsInTransaction(); j++) {
-							try {
-								statement.addBatch(orderInserts[j]);
-								for (String lineItemInsert : lineItemsInserts
-										.get(j)) {
-									statement.addBatch(lineItemInsert);
-								}
-							} catch (SQLException e) {
-								e.printStackTrace();
-							}
-						}
-						statement.executeBatch();
-					} else {
-						for (int j = 0; j < executionParameters
-								.getNumberOfDataInsertsInTransaction(); j++) {
-							statement.execute(orderInserts[j]);
+					for (int j = 0; j < executionParameters
+							.getNumberOfDataInsertsInTransaction(); j++) {
+						try {
+							statement.addBatch(orderInserts[j]);
 							for (String lineItemInsert : lineItemsInserts
 									.get(j)) {
-								Thread.sleep(random.nextInt(50));
-								statement.execute(lineItemInsert);
+								statement.addBatch(lineItemInsert);
 							}
+						} catch (SQLException e) {
+							e.printStackTrace();
 						}
 					}
+					statement.executeBatch();
+
 					connection.commit();
 					statement.close();
 
@@ -112,14 +101,17 @@ public class FrequencyExecutionTask extends ExecutionTask {
 				.getIntervalBetweenTransactions() * 1.5) {
 			taskWindow.resetCounters();
 			executionParameters
-					.setIntervalBetweenTransactions((int) (executionParameters
-							.getIntervalBetweenTransactions() * 0.9));
-			System.out.println("Zlecam kolejne zadanie o id: " + (taskId + 1)
-					+ " oraz interwale: "
-					+ executionParameters.getIntervalBetweenTransactions());
+					.setNumberOfDataInsertsInTransaction((executionParameters
+							.getNumberOfDataInsertsInTransaction() + 5));
+			System.out
+					.println("Zlecam kolejne zadanie o id: "
+							+ (taskId + 1)
+							+ " oraz o iloœci insertów w paczce: "
+							+ executionParameters
+									.getNumberOfDataInsertsInTransaction());
 			ExecutionTask executionTask;
 			try {
-				executionTask = new FrequencyExecutionTask(executionParameters,
+				executionTask = new BatchSizeExecutionTask(executionParameters,
 						taskWindow, taskId + 1, ConnectionFactory.connection);
 				executionTask.execute();
 			} catch (ClassNotFoundException e) {
@@ -135,7 +127,9 @@ public class FrequencyExecutionTask extends ExecutionTask {
 							+ executionParameters.getNumberOfTransactions()
 							+ " transactions / "
 							+ executionParameters
-									.getIntervalBetweenTransactions() + "ms");
+									.getIntervalBetweenTransactions() + "ms / "
+							+ executionParameters.getNumberOfTransactions()
+							+ " inserts in batch");
 		}
 	}
 

@@ -39,9 +39,11 @@ public class MainWindowController {
 				public void run() {
 					mainWindow.getNumberOfDataInsertsInTransaction().setValue(
 							20);
-					mainWindow.getMaterializedViewRefreshTransactionLimit().setValue(20);
+					mainWindow.getMaterializedViewRefreshTransactionLimit()
+							.setValue(20);
 					mainWindow.getIntervalBetweenCommits().setValue(3000);
 					mainWindow.getNumberOfTasks().setValue(1);
+					mainWindow.getProcessInBatch().setSelected(true);
 					mainWindow.getNumberOfTransactions().setValue(5);
 					mainWindow.getWarehouseServerAddress().setText(
 							"25.165.194.88");
@@ -88,8 +90,10 @@ public class MainWindowController {
 				.getNumberOfTransactions().getValue());
 		executionParameters.setTaskType((TaskType) mainWindow
 				.getExecutionTaskType().getSelectedItem());
-		executionParameters.setMaterializedViewRefreshTransactionLimit((Integer) mainWindow
-				.getMaterializedViewRefreshTransactionLimit().getValue());
+		executionParameters
+				.setMaterializedViewRefreshTransactionLimit((Integer) mainWindow
+						.getMaterializedViewRefreshTransactionLimit()
+						.getValue());
 		executionParameters.setNumberOfTasks((Integer) mainWindow
 				.getNumberOfTasks().getValue());
 		ConnectionParameters connectionParameters = new ConnectionParameters();
